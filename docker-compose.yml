@@ -2,11 +2,55 @@ services:
   postgres:
     container_name: jiva-postgres
     image: postgres
+    restart: always
     environment:
-      POSTGRES_DB: postgres
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
+      POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
-    restart: unless-stopped
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  localstack:
+    container_name: jiva-localstack
+    image: localstack/localstack:latest
+    ports:
+      - "127.0.0.1:4566:4566"
+    volumes:
+      - "./localstack_volume:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - SERVICES=s3,sns
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+
+  redis:
+    container_name: jiva-redis
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes: 
+      - redis_cache:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'jiva-rabbitmq'
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+        - rabbitmq_go_net
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_cache:
