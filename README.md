@@ -5,5 +5,5 @@ Jiva is a productivity and safety management app for coal mines, designed to str
 ## Stack  
 
 - Next.js
-- Flutter
-- Hono.js and FastAPI
+- Hono.js
+- FastAPI
