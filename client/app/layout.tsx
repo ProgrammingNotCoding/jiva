@@ -30,12 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${inter.variable} antialiased`}
+        className={`${inter.variable} antialiased min-h-full flex flex-col relative bg-black`}
       >
         <Navbar />
-        {children}
+        <main className="flex-1 w-full pt-[72px] sm:pt-[80px]">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
